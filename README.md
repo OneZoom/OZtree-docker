@@ -46,9 +46,11 @@ docker run -p 8080:80 --name running_onezoom onezoom/oztree
 ```
 
 (you may also wish to add `-p 3306:3306` if you want to view the database from outside the
-docker container). You can then access the OneZoom instance at
+docker container, in which case you can access the database on port 3306 with the username
+and password specified by the variables `MYSQL_USERNAME` and `MYSQL_PASSWORD` initially defined
+in the [Dockerfile](Dockerfile#L64)). You can then access the OneZoom instance at
 [http://localhost:8080](http://localhost:8080) or the
-viewer directly at [http://localhost:8080/life](http://localhost:8080/life)
+viewer directly at [http://localhost:8080/life](http://localhost:8080/life).
 
 Because we are not allowed to package the IUCN data in this image, when the standard
 onezoom/oztree image is run, it waits for the web server to be set up, then downloads the
