@@ -17,10 +17,11 @@
 # onezoom/oztree image is run, after the web server is set up, it downloads the IUCN
 # data from http://apiv3.iucnredlist.org/. If you are starting and stopping OneZoom
 # instances many times, it can be tedious to have to re-download the IUCN data each time,
-# so once IUCN processing has finished, you might want to do
-#   docker commit running_image_name onezoom/oztree-with-iucn
-# then you can launch that image using
-#   docker run -p 8080:80 onezoom/oztree-with-iucn /sbin/my_init
+# so once IUCN processing has finished, you might want to commit the image and change the
+# default CMD so that IUCN is not queried on startup:
+#   docker commit --change="CMD /sbin/my_init" running_image_name onezoom/oztree-with-iucn
+# then you can simply launch that image using
+#   docker run -p 8080:80 onezoom/oztree-with-iucn
 # which will run OneZoom without re-populating the IUCN data
 
 
@@ -109,8 +110,7 @@ COPY --from=create_database /opt/web2py /opt/web2py
 # Uncomment 3306 line below & publish the port (-p 3306:3306) to be able to access the DB
 # EXPOSE 3306
 EXPOSE 80
-CMD sh -c "\
-    ( \
+CMD ( \
       until curl -N -i -s -L http://localhost/OZtree | head -n 1  | cut -d ' ' -f2 | grep -q 200; \
         do \
           sleep 10;\
@@ -119,4 +119,4 @@ CMD sh -c "\
       echo 'Server active - downloading and processing IUCN data (~15 mins)'; \
       python3 -u /opt/web2py/applications/OZtree/OZprivate/ServerScripts/Utilities/IUCNquery.py -v; \
       echo 'IUCN DONE! OneZoom should be available on localhost under the port you specified'; \
-    ) & exec /sbin/my_init"
+    ) & exec /sbin/my_init

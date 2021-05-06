@@ -38,8 +38,9 @@ to compile the javascript code, scss files, and docs.
 
 ## Running the image
 
-When running the generated image, to access the running web server you need to define the http
-port to open, e.g. to use 8080, run 
+When running the generated image, you will need internet access (to provide the OneZoom image
+thumbnails, which are not included in the image, and to populate IUCN information: see below).
+You will also need to define the web server port to open. For example, to use 8080, run 
 
 ```
 docker run -p 8080:80 --name running_onezoom onezoom/oztree
@@ -48,26 +49,33 @@ docker run -p 8080:80 --name running_onezoom onezoom/oztree
 (you may also wish to add `-p 3306:3306` if you want to view the database from outside the
 docker container, in which case you can access the database on port 3306 with the username
 and password specified by the variables `MYSQL_USERNAME` and `MYSQL_PASSWORD` initially defined
-in the [Dockerfile](Dockerfile#L64)). You can then access the OneZoom instance at
-[http://localhost:8080](http://localhost:8080) or the
-viewer directly at [http://localhost:8080/life](http://localhost:8080/life).
+in the [Dockerfile](Dockerfile#L64))
 
-Because we are not allowed to package the IUCN data in this image, when the standard
-onezoom/oztree image is run, it waits for the web server to be set up, then downloads the
-IUCN data from http://apiv3.iucnredlist.org/ which can take about 10 minutes and makes
-several large requests to the IUCN server (outputting console information as it does so).
-It can be tedious and unnecessary to have to re-download the IUCN data if you are regularly
+Once running, you can access the OneZoom instance at [http://localhost:8080](http://localhost:8080)
+or the viewer directly at [http://localhost:8080/life](http://localhost:8080/life). However,
+before doing this you may wish to wait about 15 mins for the IUCN data to be filled out
+correctly (see the next paragraph).
+
+### IUCN (extinction risk) data
+
+The leaves in OneZoom are coloured by IUCN red list status. However, we are not allowed
+to package the IUCN data in this image (this would also risk packaging information which
+would become out of date). Therefore, when the standard `onezoom/oztree` image is run,
+it waits for the web server to be set up, then downloads the IUCN data from
+http://apiv3.iucnredlist.org/. This can take about 15 minutes and makes several large
+requests to the IUCN server (outputting console information as it does so). It can be
+tedious and unnecessary to have to re-download the IUCN data if you are regularly
 starting and stopping the same OneZoom image. To avoid this, once the IUCN processing has
 finished (when "IUCN DONE!" is output to the console), you can commit a new image using:
 
 ```
-docker commit running_onezoom onezoom/oztree-with-iucn
+docker commit --change="CMD /sbin/my_init" running_onezoom onezoom/oztree-with-iucn
 ```
 
 then in future you can launch that image using
 
 ```
-docker run -p 8080:80 onezoom/oztree-with-iucn /sbin/my_init
+docker run -p 8080:80 onezoom/oztree-with-iucn
 ```
 
 which will run OneZoom without re-populating the IUCN data.
