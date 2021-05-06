@@ -1,6 +1,10 @@
 # OZtree-docker
 
 The Dockerfile in this directory can be used to build a fully functioning OneZoom docker image.
+If you are visiting this page to find out how to run an already-downloaded docker image
+of OneZoom, e.g. downloaded from [docker hub](https://hub.docker.com) then go straight to
+[Running the image](#running-the-image). Otherwise carry on reading to find out how to
+create an image for yourself.
 
 ## Creating the sql datafile
 
@@ -9,7 +13,8 @@ databases (e.g. without the reservations table contents) in `.sql` format . Such
 is not included in this repo as it is large and changable. We suggest naming it something like
 "onezoom_prod_2021-04-30.sql"
 
-Appropriate sql dumps can be created using 
+Appropriate sql dumps can be created from a running OneZoom database (e.g. `onezoom_prod`)
+using:
 
 ```
 mysqldump onezoom_prod ordered_leaves ordered_nodes images_by_name images_by_ott quotes tree_startpoints vernacular_by_name vernacular_by_ott -u onezoom -p > onezoom_prod_YYYY-MM-DD.sql
