@@ -77,7 +77,7 @@ RUN /sbin/my_init & \
     until curl -N -i -s -L http://localhost/OZtree | head -n 1  | cut -d ' ' -f2 | grep -q 200; \
       do \
         sleep 10;\
-        echo "Waiting for server... "; \
+        echo " $(date +'%T'): waiting for server ... "; \
       done; \
     echo "Server active - waiting 5 secs for web2py to create database description files"; \
     sleep 5; \
@@ -87,7 +87,7 @@ RUN /sbin/my_init & \
       mysql "${MYSQL_DATABASE}" -h localhost -u "${MYSQL_USERNAME}" -p"${MYSQL_PASSWORD}" \
         < "$filename"; \
     done; \
-    echo "Force setting indexes - 1091 ERRORs here are harmless and can be ignored"; \
+    echo "Force setting indexes - 1091 ERRORs about failing to DROP indexes are harmless and can be ignored"; \
     mysql "${MYSQL_DATABASE}" -f -h localhost -u "${MYSQL_USERNAME}" -p"${MYSQL_PASSWORD}" \
       < OZprivate/ServerScripts/SQL/create_db_indexes.sql;
 # We seem to need a blank CMD here to force the next FROM to be treated as a separate stage
@@ -106,7 +106,14 @@ ENV MYSQL_DATA_DIR=/var/lib/mysql_permanent
 # copy the DB files from the previous image
 COPY --from=create_database "/var/lib/mysql" "${MYSQL_DATA_DIR}"
 # copy the compiled app including db description files
-COPY --from=create_database /opt/web2py /opt/web2py
+WORKDIR /opt/web2py/
+COPY --from=create_database /opt/web2py ./
+# copy JPG images (if any) from the img directory on the 
+WORKDIR applications/OZtree
+COPY img static/FinalOutputs/img
+# Remove the line "url_base = //images.onezoom.org/" if there are directories in static/FinalOutputs/img
+# Which will make the OneZoom instance include any JPGs from the Local Host in the docker image
+RUN if [ -n "$(ls -d static/FinalOutputs/img/*)" ]; then sed -i "/^url_base/d" private/appconfig.ini ; fi;
 # Uncomment 3306 line below & publish the port (-p 3306:3306) to be able to access the DB
 # EXPOSE 3306
 EXPOSE 80
