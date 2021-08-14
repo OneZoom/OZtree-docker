@@ -66,7 +66,7 @@ rsync -av -e ssh web2py@OneZoom:${OZtree_dir}/static/FinalOutputs/img/ ./img
 Once a db dump has been created, the docker image can be generated using 
 
 ```
-docker build -t onezoom/oztree
+docker build -t onezoom/oztree .
 ```
 
 Which, if done from scratch, will take of the order of 30 minutes to build an image and
