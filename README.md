@@ -22,7 +22,7 @@ Appropriate sql dumps can be created from a running OneZoom database (e.g. `onez
 using:
 
 ```
-mysqldump onezoom_prod ordered_leaves ordered_nodes images_by_name images_by_ott quotes tree_startpoints vernacular_by_name vernacular_by_ott prices -u onezoom -p > onezoom_prod_YYYY-MM-DD.sql
+mysqldump onezoom_prod ordered_leaves ordered_nodes images_by_name images_by_ott quotes tree_startpoints vernacular_by_name vernacular_by_ott prices banned -u onezoom -p > onezoom_prod_YYYY-MM-DD.sql
 ```
 
 or in e.g. SequelAce, by selecting all the tables listed above for export.
