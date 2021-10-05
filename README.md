@@ -66,7 +66,12 @@ rsync -av -e ssh web2py@OneZoom:${OZtree_dir}/static/FinalOutputs/img/ ./img
 Once a db dump has been created, the docker image can be generated using 
 
 ```
-docker build -t onezoom/oztree .
+if [ -n "$(ls -d img/*)" ]; then
+  docker build -t onezoom/oztree-complete .
+else
+  docker build -t onezoom/oztree .
+fi
+
 ```
 
 Which, if done from scratch, will take of the order of 30 minutes to build an image and
@@ -77,12 +82,13 @@ to compile the javascript code, scss files, and docs.
 
 ## Running the image
 
-When running the generated image, you will need internet access (to provide the OneZoom image
-thumbnails, which are not included in the image, and to populate IUCN information: see below).
+When running the generated image, you will need internet access to populate IUCN
+information (see below), and also, if you have downloaded the version without embedded
+images, to view the OneZoom image thumbnails.
 You will also need to define the web server port to open. For example, to use 8080, run 
 
 ```
-docker run -p 8080:80 --name running_onezoom onezoom/oztree
+docker run -p 8080:80 --name running_onezoom onezoom/oztree-complete
 ```
 
 (if running from the GUI, you can use the Optional Settings tab to map port 80 on the
@@ -113,13 +119,13 @@ starting and stopping the same OneZoom image. To avoid this, once the IUCN proce
 finished (when "IUCN DONE!" is output to the console), you can commit a new image using:
 
 ```
-docker commit --change="CMD /sbin/my_init" running_onezoom onezoom/oztree-with-iucn
+docker commit --change="CMD /sbin/my_init" running_onezoom onezoom/oztree-complete-with-iucn
 ```
 
 then in future you can launch that image using
 
 ```
-docker run -p 8080:80 onezoom/oztree-with-iucn
+docker run -p 8080:80 onezoom/oztree-complete-with-iucn
 ```
 
 which will run OneZoom without re-populating the IUCN data.
