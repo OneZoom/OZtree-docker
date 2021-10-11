@@ -45,9 +45,10 @@ RUN if [ "${WEB2PY_MIN}" == true ]; then \
     fi; \
     rm -rf tmp
 WORKDIR web2py/applications
-RUN git clone https://github.com/OneZoom/OZtree.git --depth 1 --single-branch OZtree
-RUN cp OZtree/_COPY_CONTENTS_TO_WEB2PY_DIR/routes.py ../
+RUN git clone https://github.com/OneZoom/OZtree.git --single-branch OZtree
 WORKDIR OZtree
+RUN git fetch --tags
+RUN cp _COPY_CONTENTS_TO_WEB2PY_DIR/routes.py ../../
 # install node modules outside of current dir, so they aren't copied over
 RUN mkdir /tmp/node_modules && ln -s /tmp/node_modules ./node_modules
 RUN npm install
