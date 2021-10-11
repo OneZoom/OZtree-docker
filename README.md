@@ -30,7 +30,7 @@ or in e.g. SequelAce, by selecting all the tables listed above for export.
 Note that if you are exporting
 from a mysql 5.7 instance you may need to search and delete the "NO_AUTO_CREATE_USER" string from the sql file
 so that the commands are valid for MySQL server 8.0 - this can be done with e.g.
-`sed -i 's/NO_AUTO_CREATE_USER//' onezoom_prod_YYYY-MM-DD.sql`.
+`sed -i '' -e 's/NO_AUTO_CREATE_USER//' onezoom_prod_YYYY-MM-DD.sql`.
 
 ## Downloading thumbnails (optional)
 
