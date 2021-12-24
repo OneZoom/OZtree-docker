@@ -14,15 +14,21 @@ Carry on reading if you want to find out how to create an image for yourself fro
 ## Creating the sql datafile
 
 To build, the `sql_data` folder should contain a download dump of the public contents of the OneZoom
-databases (e.g. without the reservations table contents) in `.sql` format . Such a dump
-is not included in this repo as it is large and changable. We suggest naming it something like
-"onezoom_prod_2021-04-30.sql"
+databases (e.g. without the reservations table contents and without the IUCN data) in `.sql` format.
+Such a dump is not included in this repo as it is large and changable. We suggest naming it
+something like "onezoom_prod_2021-04-30.sql"
 
-Appropriate sql dumps can be created from a running OneZoom database (e.g. `onezoom_prod`)
-using:
+Appropriate sql dumps can be created from a running OneZoom database (e.g. `onezoom_dev`), ideally
+after swapping all the the `ordered_nodes.IUCNxxx` columns for NULL:
 
 ```
-mysqldump onezoom_prod ordered_leaves ordered_nodes images_by_name images_by_ott quotes tree_startpoints vernacular_by_name vernacular_by_ott prices banned -u onezoom -p > onezoom_prod_YYYY-MM-DD.sql
+update ordered_nodes set iucnNE = NULL, iucnDD = NULL, iucnLC = NULL, iucnNT = NULL, iucnVU = NULL, iucnEN = NULL, iucnCR = NULL, iucnEW = NULL, iucnEX = NULL;
+```
+
+Then doing
+
+```
+mysqldump onezoom_dev ordered_leaves ordered_nodes images_by_name images_by_ott quotes tree_startpoints vernacular_by_name vernacular_by_ott prices banned -u onezoom -p > onezoom_dev_YYYY-MM-DD.sql
 ```
 
 or in e.g. SequelAce, by selecting all the tables listed above for export.
