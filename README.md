@@ -1,15 +1,24 @@
 # OZtree-docker
 
-The OneZoom tree of life explorer provides an easy way to navigate the evolutionary tree that connects all living things.  It is a product of the OneZoom not for profit organisation registered in the UK. Our mission is to advance the education of the public in the subjects of evolution, biodiversity and conservation of the variety of life on earth.
+The OneZoom tree of life explorer provides an easy way to navigate the evolutionary tree
+that connects all living things.  It is a product of the OneZoom not for profit organisation
+registered in the UK. Our mission is to advance the education of the public in the subjects
+of evolution, biodiversity and conservation of the variety of life on earth.
 
-You are looking either at a fully functional OneZoom tree of life explorer docker image, or the code required to make such an image.
+You are looking either at a fully functional OneZoom tree of life explorer docker image,
+or the code required to make such an image.
 If you are visiting this page to find out how to run an already-downloaded docker image
 of OneZoom, e.g. downloaded from [docker hub](https://hub.docker.com) then go straight to
 [Running the image](#running-the-image). 
 
-Please note that the image contains both OneZoom software (use of which is subject to the OneZoom license https://www.onezoom.org/OZtree/static/downloads/OneZoom_License_V1.pdf) and third party data sources including images (please see https://www.onezoom.org/data_sources.html for more information).
+Please note that the image contains both OneZoom software (use of which is subject to the
+OneZoom license https://www.onezoom.org/OZtree/static/downloads/OneZoom_License_V1.pdf)
+and third party data sources including images
+(please see https://www.onezoom.org/data_sources.html for more information).
 
-Carry on reading if you want to find out how to create an image for yourself from the GitHub repository.
+
+Carry on reading if you want to find out how to create an image for yourself from the
+GitHub repository, otherwise go straight to [Running the image](#running-the-image).
 
 ## Creating the sql datafile
 
@@ -135,4 +144,3 @@ docker run -p 8080:80 onezoom/oztree-complete-with-iucn
 ```
 
 which will run OneZoom without re-populating the IUCN data.
-
