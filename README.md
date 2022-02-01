@@ -144,3 +144,8 @@ docker run -p 8080:80 onezoom/oztree-complete-with-iucn
 ```
 
 which will run OneZoom without re-populating the IUCN data.
+
+## Changing the images
+
+See [README_BESPOKE_IMAGES.md](README_BESPOKE_IMAGES.md) for details on how to supplement
+or replace the photos and other images in a OneZoom instance with your own versions.
