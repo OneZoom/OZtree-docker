@@ -73,7 +73,7 @@ what we run from within the main `OZtree-docker` directory:
 
 ```
 OZtree_dir="OneZoomComplete/applications/OZtree"
-rsync -av -e ssh web2py@OneZoom:${OZtree_dir}/static/FinalOutputs/img/ ./img
+rsync -av -e ssh -L web2py@OneZoom:${OZtree_dir}/static/FinalOutputs/img/ ./img
 ```
 
 ## Building the image
