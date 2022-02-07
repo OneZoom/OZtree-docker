@@ -1,8 +1,8 @@
 ## Creating a bespoke OneZoom instance with your own photos
 
-You can substitute your own photos or images into a docker version of OneZoom by using
-the `add_bespoke_images.py` script, in the `OZprivate/ServerScripts/Utilities/` directory.
-Images of any size and shape can be used, but it will look better if you use square
+You can substitute your own photos or images into a docker version of OneZoom by using the
+[add_bespoke_images.py](https://github.com/OneZoom/OZtree/blob/main/OZprivate/ServerScripts/Utilities/add_bespoke_images.py)
+script. Images of any size and shape can be used, but it will look better if you use square
 images. The higher the image resolution, the more bandwidth it will take to zoom around
 the tree; for this reason, on the main OneZoom
 site we use thumbnail images whose height and width are only a few hundred pixels.
