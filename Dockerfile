@@ -30,7 +30,7 @@
 
 FROM onezoom/alpine-compass-python-perl-node:12 as compile_web2py
 WORKDIR /opt/tmp
-RUN git clone --recursive https://github.com/web2py/web2py.git --depth 1 --branch v2.21.1 --single-branch web2py
+RUN git clone --recursive https://github.com/web2py/web2py.git --depth 1 --branch v2.27.1 --single-branch web2py
 WORKDIR /opt
 ENV WEB2PY_MIN=1
 RUN if [ "${WEB2PY_MIN}" == true ]; then \
