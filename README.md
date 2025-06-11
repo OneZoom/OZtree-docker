@@ -72,7 +72,7 @@ the correct port, you can create the img directory via rsync+ssh. For example, t
 what we run from within the main `OZtree-docker` directory:
 
 ```
-OZtree_dir="OneZoomComplete/applications/OZtree"
+OZtree_dir="www.onezoom.org/applications/OZtree"
 rsync -av -e ssh -L web2py@OneZoom:${OZtree_dir}/static/FinalOutputs/img/ ./img
 ```
 
