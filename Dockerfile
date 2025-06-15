@@ -28,9 +28,9 @@
 ## First stage - download Web2py + OneZoom and compile
 #   Here we download the latest web2py and OneZoom versions from github, and compile the site
 
-FROM onezoom/alpine-compass-python-perl-node:12 as compile_web2py
+FROM onezoom/alpine-compass-python-perl-node:latest AS compile_web2py
 WORKDIR /opt/tmp
-RUN git clone --recursive https://github.com/web2py/web2py.git --depth 1 --branch v2.21.1 --single-branch web2py
+RUN git clone --recursive https://github.com/web2py/web2py.git --depth 1 --branch v3.0.11 --single-branch web2py
 WORKDIR /opt
 ENV WEB2PY_MIN=1
 RUN if [ "${WEB2PY_MIN}" == true ]; then \
@@ -43,23 +43,24 @@ RUN if [ "${WEB2PY_MIN}" == true ]; then \
     fi; \
     rm -rf tmp
 WORKDIR web2py/applications
-RUN git clone https://github.com/OneZoom/OZtree.git --single-branch OZtree
+RUN git clone https://github.com/OneZoom/OZtree.git --single-branch --tags OZtree
 WORKDIR OZtree
-RUN git fetch --tags
-RUN cp _COPY_CONTENTS_TO_WEB2PY_DIR/routes.py ../../
+COPY appconfig.ini private/appconfig.ini
 # install node modules outside of current dir, so they aren't copied over
 RUN mkdir /tmp/node_modules && ln -s /tmp/node_modules ./node_modules
 RUN npm install
-RUN grunt prod
+# make the web2py app, but use dev so it's not compiled (otherwise we can have 
+# problems with python version mismatches in stage 2)
+RUN grunt prod --requirements=requirements-minimal.txt
 
 
 ## Second stage - create database files & populate database
 #   Here we run a webserver, access the OneZoom site (which creates the DB tables)
 #   and then overwrite the necessary tables with a recent DB dump in sql_data
 
-FROM onezoom/docker-nginx-web2py-min-mysql:8.0 as base
+FROM onezoom/docker-nginx-web2py-min-mysql:latest AS base
 
-FROM base as create_database
+FROM base AS create_database
 ENV MYSQL_DATABASE=OneZoom
 ENV MYSQL_USERNAME=oz
 ENV MYSQL_PASSWORD=passwd
@@ -96,7 +97,7 @@ CMD sh
 ## Third stage - copy app & created files into new image. No db name or username needed
 ##  as these should already be present in the DB files loaded into MYSQL_DATA_DIR
 
-FROM base as final
+FROM base AS final
 ENV MYSQL_DATABASE=''
 ENV MYSQL_USERNAME=''
 ENV MYSQL_PASSWORD=''
@@ -113,16 +114,20 @@ COPY img static/FinalOutputs/img
 # Remove the line "url_base = //images.onezoom.org/" if there are directories in static/FinalOutputs/img
 # Which will make the OneZoom instance include any JPGs from the Local Host in the docker image
 RUN if [ -n "$(ls -d static/FinalOutputs/img/*)" ]; then sed -i "/^url_base/d" private/appconfig.ini ; fi;
+RUN apt-get update && apt-get install -y --no-install-recommends python3-requests
 # Uncomment 3306 line below & publish the port (-p 3306:3306) to be able to access the DB
-# EXPOSE 3306
+EXPOSE 3306
 EXPOSE 80
-CMD ( \
-      until curl -N -i -s -L http://localhost/OZtree | head -n 1  | cut -d ' ' -f2 | grep -q 200; \
-        do \
-          sleep 10;\
-          echo 'Waiting for server... '; \
-        done; \
-      echo 'Server active - downloading and processing IUCN data (~15 mins)'; \
-      python3 -u /opt/web2py/applications/OZtree/OZprivate/ServerScripts/Utilities/IUCNquery.py -v; \
-      echo 'IUCN DONE! OneZoom should be available on localhost under the port you specified'; \
-    ) & exec /sbin/my_init
+# The following command will run when the image starts up, - commented out due to the
+# IUCS API not longer working for us: https://github.com/OneZoom/OZtree/issues/949
+#CMD ( \
+#      until curl -N -i -s -L http://localhost/OZtree | head -n 1  | cut -d ' ' -f2 | grep -q 200; \
+#        do \
+#          sleep 10;\
+#          echo 'Waiting for server... '; \
+#        done; \
+#      echo 'Server active - downloading and processing IUCN data (~15 mins)'; \
+#      python3 -u /opt/web2py/applications/OZtree/OZprivate/ServerScripts/Utilities/IUCNquery.py -v; \
+#      echo 'IUCN DONE! OneZoom should be available on localhost under the port you specified'; \
+#    ) & exec /sbin/my_init
+CMD exec /sbin/my_init
